@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GamificationController;
 use App\Http\Controllers\PointsController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ParkinsonController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -40,4 +41,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Levels
     Route::get('/level', [GamificationController::class, 'level']);
+});
+
+// Parkinson's Law Routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/parkinson/challenges', [ParkinsonController::class, 'index']);
+    Route::post('/parkinson/challenges', [ParkinsonController::class, 'store']);
+    Route::post('/parkinson/challenges/{id}/start', [ParkinsonController::class, 'start']);
+    Route::post('/parkinson/challenges/{id}/complete', [ParkinsonController::class, 'complete']);
+    Route::get('/parkinson/accuracy', [ParkinsonController::class, 'accuracy']);
+    Route::get('/parkinson/stats', [ParkinsonController::class, 'stats']);
 });
