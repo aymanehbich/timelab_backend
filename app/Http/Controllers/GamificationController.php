@@ -33,7 +33,24 @@ class GamificationController extends Controller
             ->take(10)
             ->get();
 
-        return response()->json($users);
+        // Format the leaderboard data
+        $leaderboard = $users->map(function ($user, $index) {
+            $totalPoints = $user->points_sum_amount ?? 0;
+
+            // Calculate level based on points
+            $level = Level::where('required_points', '<=', $totalPoints)
+                ->orderBy('required_points', 'desc')
+                ->first();
+
+            return [
+                'rank' => $index + 1,
+                'name' => $user->name,
+                'points' => $totalPoints,
+                'level' => $level ? $level->id : 1,
+            ];
+        });
+
+        return response()->json($leaderboard);
     }
 
     public function level()
