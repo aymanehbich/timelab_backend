@@ -22,3 +22,10 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+.env.local*
+composer.lock
+.gitignore
+package-lock.json
+composer.lock
+.gitignore
+composer.lock

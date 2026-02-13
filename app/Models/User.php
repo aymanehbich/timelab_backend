@@ -55,4 +55,16 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Badge::class, 'user_badges');
     }
+
+    // app/Models/User.php — ajouter ces relations
+
+public function pomodoroSessions(): HasMany
+{
+    return $this->hasMany(PomodoroSession::class);
+}
+
+public function pomodoroStreak(): HasOne
+{
+    return $this->hasOne(PomodoroStreak::class);
+}
 }

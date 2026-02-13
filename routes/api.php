@@ -52,3 +52,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/parkinson/accuracy', [ParkinsonController::class, 'accuracy']);
     Route::get('/parkinson/stats', [ParkinsonController::class, 'stats']);
 });
+
+//Pomodoro
+
+Route::middleware('auth:sanctum')->prefix('pomodoro')->group(function () {
+
+    // Actions timer
+    Route::post('/start',      [PomodoroController::class, 'start']);
+    Route::post('/complete',   [PomodoroController::class, 'complete']);
+    Route::post('/interrupt',  [PomodoroController::class, 'interrupt']);
+
+    // Données
+    Route::get('/sessions',         [PomodoroController::class, 'sessions']);
+    Route::get('/sessions/today',   [PomodoroController::class, 'today']);
+    Route::get('/streaks',          [PomodoroController::class, 'streaks']);
+    Route::get('/stats',            [PomodoroController::class, 'stats']);
+});
