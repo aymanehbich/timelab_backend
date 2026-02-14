@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             // UserSeeder should run before PointSeeder
             PointSeeder::class,
             UserBadgeSeeder::class,
+            TypingTextsSeeder::class,
         ]);
     }
 }

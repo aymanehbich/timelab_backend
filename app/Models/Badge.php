@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Badge extends Model
 {
     //
-    protected $fillable = ['name', 'icon', 'required_points'];
+    protected $fillable = ['name', 'description', 'icon', 'required_points', 'condition_key'];
 
     public function users()
     {

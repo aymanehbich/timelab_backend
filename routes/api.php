@@ -5,6 +5,7 @@ use App\Http\Controllers\GamificationController;
 use App\Http\Controllers\PointsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ParkinsonController;
+use App\Http\Controllers\TypingChallengeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PomodoroController;  // ← AJOUTER CETTE LIGNE
@@ -52,6 +53,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/parkinson/challenges/{id}/complete', [ParkinsonController::class, 'complete']);
     Route::get('/parkinson/accuracy', [ParkinsonController::class, 'accuracy']);
     Route::get('/parkinson/stats', [ParkinsonController::class, 'stats']);
+
+    // Typing Challenge Routes
+    Route::get('/parkinson/typing/texts', [TypingChallengeController::class, 'texts']);
+    Route::post('/parkinson/typing/start', [TypingChallengeController::class, 'start']);
+    Route::post('/parkinson/typing/complete', [TypingChallengeController::class, 'complete']);
+    Route::get('/parkinson/typing/stats', [TypingChallengeController::class, 'stats']);
+    Route::get('/parkinson/typing/history', [TypingChallengeController::class, 'history']);
 });
 
 //Pomodoro
