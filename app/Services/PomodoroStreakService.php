@@ -37,7 +37,7 @@ class PomodoroStreakService
         if ($last === $today) {
             $multiplier  = $this->getMultiplier($streak->current_streak);
             $points      = (int)(25 * $multiplier);
-            // $this->givePoints($userId, $points);
+            $this->givePoints($userId, $points);
 
             return $this->buildResult($streak, $points, $multiplier, null);
         }
@@ -66,7 +66,7 @@ class PomodoroStreakService
         // ─────────────────────────────────────
         $multiplier = $this->getMultiplier($streak->current_streak);
         $points     = (int)(25 * $multiplier);
-        // $this->givePoints($userId, $points);
+        $this->givePoints($userId, $points);
 
         // ─────────────────────────────────────
         // 5. Vérifier si un badge est débloqué
@@ -94,10 +94,12 @@ class PomodoroStreakService
     }
 
     // Donner les points au user
-    // private function givePoints(int $userId, int $points): void
-    // {
-    //     User::where('id', $userId)->increment('points', $points);
-    // }
+    private function givePoints(int $userId, int $points): void
+    {
+Point::create([
+    'user_id' => $userId,   // bigint
+    'amount'  => $points,   // int (ex: 25, 37, 50...)
+]);    }
 
     // Vérifier et attribuer un badge
     private function checkAndAwardBadge(int $userId, int $streak): ?string

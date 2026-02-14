@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ParkinsonController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PomodoroController;  // ← AJOUTER CETTE LIGNE
 
 Route::get('/', function () {
     return ['message' => 'API is running!'];
