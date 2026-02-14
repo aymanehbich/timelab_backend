@@ -39,6 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user-badges', function () {
         return auth()->user()->badges;
     });
+    Route::get('/gamification/badges', [\App\Http\Controllers\GamificationController::class, 'badges']);
 
     // Levels
     Route::get('/level', [GamificationController::class, 'level']);
@@ -57,7 +58,6 @@ Route::middleware('auth:sanctum')->group(function () {
 //Pomodoro
 
 Route::middleware('auth:sanctum')->prefix('pomodoro')->group(function () {
-
     // Actions timer
     Route::post('/start',      [PomodoroController::class, 'start']);
     Route::post('/complete',   [PomodoroController::class, 'complete']);
@@ -68,4 +68,13 @@ Route::middleware('auth:sanctum')->prefix('pomodoro')->group(function () {
     Route::get('/sessions/today',   [PomodoroController::class, 'today']);
     Route::get('/streaks',          [PomodoroController::class, 'streaks']);
     Route::get('/stats',            [PomodoroController::class, 'stats']);
+});
+
+// Eisenhower Matrix Learning Quiz
+Route::middleware('auth:sanctum')->prefix('eisenhower')->group(function () {
+    Route::get('/tasks', [\App\Http\Controllers\EisenhowerController::class, 'tasks']);
+    Route::get('/next', [\App\Http\Controllers\EisenhowerController::class, 'next']);
+    Route::post('/submit', [\App\Http\Controllers\EisenhowerController::class, 'submit']);
+    Route::get('/progress', [\App\Http\Controllers\EisenhowerController::class, 'progress']);
+    Route::post('/reset', [\App\Http\Controllers\EisenhowerController::class, 'reset']);
 });

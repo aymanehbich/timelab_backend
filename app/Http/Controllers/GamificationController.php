@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Badge;
 use App\Models\Level;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -63,6 +64,11 @@ class GamificationController extends Controller
             ->first();
 
         return response()->json($level);
+    }
+
+    public function badges()
+    {
+        return response()->json(Badge::all());
     }
     
 }
