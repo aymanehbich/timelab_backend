@@ -5,6 +5,7 @@ use App\Http\Controllers\GamificationController;
 use App\Http\Controllers\PointsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ParkinsonController;
+use App\Http\Controllers\TimeBlockController;
 use App\Http\Controllers\TypingChallengeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -85,4 +86,18 @@ Route::middleware('auth:sanctum')->prefix('eisenhower')->group(function () {
     Route::post('/submit', [\App\Http\Controllers\EisenhowerController::class, 'submit']);
     Route::get('/progress', [\App\Http\Controllers\EisenhowerController::class, 'progress']);
     Route::post('/reset', [\App\Http\Controllers\EisenhowerController::class, 'reset']);
+});
+
+Route::middleware('auth:sanctum')->group(function() {
+
+    Route::prefix('time-blocks')->group(function() {
+        Route::get('/', [TimeBlockController::class,'index'])->name('time-blocks.index');
+        Route::get('/{id}', [TimeBlockController::class,'show'])->name('time-blocks.show');
+        Route::post('/', [TimeBlockController::class,'store'])->name('time-blocks.store');
+        Route::patch('/{id}', [TimeBlockController::class,'update'])->name('time-blocks.update');
+        Route::delete('/{id}', [TimeBlockController::class,'destroy'])->name('time-blocks.destroy');
+        Route::post('/bulk-update', [TimeBlockController::class,'bulkUpdate'])->name('time-blocks.bulkUpdate');
+    });
+
+    Route::get('time-blocks-statistics', [TimeBlockController::class,'statistics'])->name('time-blocks.statistics');
 });
