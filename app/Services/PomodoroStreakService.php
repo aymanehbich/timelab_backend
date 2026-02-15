@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\PomodoroStreak;
 use App\Models\User;
+use App\Models\Point;
 use Carbon\Carbon;
 
 class PomodoroStreakService

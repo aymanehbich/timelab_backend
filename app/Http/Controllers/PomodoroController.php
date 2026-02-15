@@ -257,19 +257,59 @@ class PomodoroController extends Controller
             ->selectRaw('task_name, COUNT(*) as sessions, SUM(duration) as total_minutes')
             ->groupBy('task_name')->orderByDesc('sessions')->limit(10)->get();
 
-        $weeklyStats = PomodoroSession::where('user_id', $userId)
-            ->where('type', 'work')->where('completed', true)
-            ->where('started_at', '>=', now()->subDays(7))
-            ->selectRaw('DATE(started_at) as date, COUNT(*) as sessions')
-            ->groupBy('date')->orderBy('date')->get();
 
-        return response()->json([
-            'total_sessions'  => $totalSessions,
-            'total_minutes'   => $totalMinutes,
-            'total_hours'     => round($totalMinutes / 60, 1),
-            'completion_rate' => $completionRate,
-            'task_stats'      => $taskStats,
-            'weekly_stats'    => $weeklyStats,
-        ]);
+            // ── Sessions aujourd'hui ──
+    $todaySessions = PomodoroSession::where('user_id', $userId)
+        ->where('type', 'work')
+        ->where('completed', true)
+        ->whereDate('started_at', today())
+        ->count();
+
+    // ── Moyenne par jour ──
+    // Compter les jours distincts où l'user a travaillé
+    $dailyCounts = PomodoroSession::where('user_id', $userId)
+        ->where('type', 'work')
+        ->where('completed', true)
+        ->selectRaw('DATE(started_at) as date, COUNT(*) as count')
+        ->groupBy('date')
+        ->get();
+
+    $avgPerDay  = $dailyCounts->count() > 0
+        ? round($dailyCounts->avg('count'), 1)
+        : 0;
+
+    // ── Meilleur jour ──
+    $bestDay = $dailyCounts->max('count') ?? 0;
+
+    // ── Stats complètes (garder le reste) ──
+    $totalSessions = PomodoroSession::where('user_id', $userId)
+        ->where('type', 'work')->where('completed', true)->count();
+
+    $totalMinutes = PomodoroSession::where('user_id', $userId)
+        ->where('type', 'work')->where('completed', true)->sum('duration');
+
+    $totalStarted = PomodoroSession::where('user_id', $userId)
+        ->where('type', 'work')->count();
+
+    $completionRate = $totalStarted > 0
+        ? round(($totalSessions / $totalStarted) * 100) : 0;
+
+    $weeklyStats = PomodoroSession::where('user_id', $userId)
+        ->where('type', 'work')->where('completed', true)
+        ->where('started_at', '>=', now()->subDays(7))
+        ->selectRaw('DATE(started_at) as date, COUNT(*) as sessions')
+        ->groupBy('date')->orderBy('date')->get();
+
+    return response()->json([
+        'today_sessions'  => $todaySessions,   // ← widget Today
+        'avg_per_day'     => $avgPerDay,        // ← widget Avg/day
+        'best_day'        => $bestDay,          // ← widget Best day
+        'total_sessions'  => $totalSessions,
+        'total_minutes'   => $totalMinutes,
+        'total_hours'     => round($totalMinutes / 60, 1),
+        'completion_rate' => $completionRate,
+        'task_stats'      => $taskStats ,
+        'weekly_stats'    => $weeklyStats,
+    ]);
     }
 }
