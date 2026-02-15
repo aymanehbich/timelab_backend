@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             LevelSeeder::class,
             BadgeSeeder::class,
             // Add your other seeders here as needed
+            EisenhowerTaskSeeder::class,
             PointSeeder::class,
             UserBadgeSeeder::class,
             TypingTextsSeeder::class, // Make sure this matches your seeder class name
