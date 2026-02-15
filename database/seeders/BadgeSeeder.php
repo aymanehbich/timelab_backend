@@ -13,17 +13,6 @@ class BadgeSeeder extends Seeder
      */
     public function run(): void
     {
-        //
-        $badges = [
-            ['name' => 'First Steps', 'required_points' => 10],
-            ['name' => 'Rising Star', 'required_points' => 100],
-            ['name' => 'Achiever', 'required_points' => 500],
-            ['name' => 'Champion', 'required_points' => 1000],
-            ['name' => 'Legend', 'required_points' => 5000],
-        ];
-
-        foreach ($badges as $badge) {
-            Badge::create($badge);
-        }
+        // Badges are created via migrations (Parkinson + Eisenhower)
     }
 }

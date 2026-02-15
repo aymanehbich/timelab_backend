@@ -25,10 +25,10 @@ class DatabaseSeeder extends Seeder
         $this->call([
             LevelSeeder::class,
             BadgeSeeder::class,
-            // UserSeeder should run before PointSeeder
+            // Add your other seeders here as needed
             PointSeeder::class,
             UserBadgeSeeder::class,
-            TypingTextsSeeder::class,
+            TypingTextsSeeder::class, // Make sure this matches your seeder class name
         ]);
     }
 }
