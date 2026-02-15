@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\EisenhowerTask;
 use App\Models\EisenhowerAttempt;
+use App\Models\Badge;
 use App\Services\PointsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -114,14 +115,27 @@ class EisenhowerController extends Controller
             'points_earned' => $pointsEarned,
         ]);
 
-        return response()->json([
+        // Check if user just completed and passed this level → award badge
+        $earnedBadge = $this->checkAndAwardLevelBadge($userId, $task->level);
+
+        $response = [
             'is_correct' => $isCorrect,
             'correct_quadrant' => $task->quadrant,
             'chosen_quadrant' => (int) $request->chosen_quadrant,
             'explanation' => $task->explanation,
             'points_earned' => $pointsEarned,
             'level' => $task->level,
-        ]);
+        ];
+
+        if ($earnedBadge) {
+            $response['badge_earned'] = [
+                'name' => $earnedBadge->name,
+                'description' => $earnedBadge->description,
+                'icon' => $earnedBadge->icon,
+            ];
+        }
+
+        return response()->json($response);
     }
 
     // GET /api/eisenhower/progress?level=1 — user's quiz progress (per level or overall)
@@ -175,6 +189,53 @@ class EisenhowerController extends Controller
         $userId = auth()->id();
         EisenhowerAttempt::where('user_id', $userId)->delete();
         return response()->json(['message' => 'Progress reset successfully.']);
+    }
+
+    // Check if user passed a level and award the corresponding badge
+    private function checkAndAwardLevelBadge(int $userId, int $level): ?Badge
+    {
+        $conditionKey = 'eisenhower_level_' . $level;
+        $user = Auth::user();
+
+        // Check if badge already earned
+        if ($user->badges()->where('condition_key', $conditionKey)->exists()) {
+            return null;
+        }
+
+        $taskIds = EisenhowerTask::where('level', $level)->pluck('id');
+        $totalTasks = $taskIds->count();
+
+        if ($totalTasks === 0) {
+            return null;
+        }
+
+        $attempted = EisenhowerAttempt::where('user_id', $userId)
+            ->whereIn('eisenhower_task_id', $taskIds)
+            ->count();
+
+        // Must attempt all tasks in the level
+        if ($attempted < $totalTasks) {
+            return null;
+        }
+
+        $correct = EisenhowerAttempt::where('user_id', $userId)
+            ->whereIn('eisenhower_task_id', $taskIds)
+            ->where('is_correct', true)
+            ->count();
+
+        $percentage = ($correct / $totalTasks) * 100;
+
+        if ($percentage < self::UNLOCK_THRESHOLD) {
+            return null;
+        }
+
+        $badge = Badge::where('condition_key', $conditionKey)->first();
+
+        if ($badge) {
+            $user->badges()->attach($badge->id);
+        }
+
+        return $badge;
     }
 
     // Check if a level is unlocked for a user

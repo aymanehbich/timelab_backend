@@ -22,12 +22,20 @@ return new class extends Migration
         // Insert Parkinson's Law badges (only if they don't exist)
         // IMPORTANT: required_points = 999999 pour éviter l'auto-attribution par BadgeService
         // Ces badges sont attribués uniquement par la logique spécifique Parkinson
+        // Add condition_key column early so Parkinson badges can use it
+        if (!Schema::hasColumn('badges', 'condition_key')) {
+            Schema::table('badges', function (Blueprint $table) {
+                $table->string('condition_key')->nullable()->unique()->after('required_points');
+            });
+        }
+
         $badgesToInsert = [
             [
                 'name' => 'First Timer',
                 'description' => 'Bienvenue dans le monde de l\'estimation !',
                 'icon' => '🎯',
                 'required_points' => 999999,
+                'condition_key' => 'parkinson_first_timer',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -36,6 +44,7 @@ return new class extends Migration
                 'description' => 'Tu es incroyablement précis !',
                 'icon' => '🎖️',
                 'required_points' => 999999,
+                'condition_key' => 'parkinson_precision',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -44,6 +53,7 @@ return new class extends Migration
                 'description' => 'Tu maîtrises l\'art de l\'estimation !',
                 'icon' => '🏆',
                 'required_points' => 999999,
+                'condition_key' => 'parkinson_efficiency',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -52,6 +62,7 @@ return new class extends Migration
                 'description' => 'Ta persévérance est impressionnante !',
                 'icon' => '🏃',
                 'required_points' => 999999,
+                'condition_key' => 'parkinson_marathon',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -60,6 +71,7 @@ return new class extends Migration
                 'description' => 'Tu est plus rapide que prévu !',
                 'icon' => '⚡',
                 'required_points' => 999999,
+                'condition_key' => 'parkinson_speed',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
